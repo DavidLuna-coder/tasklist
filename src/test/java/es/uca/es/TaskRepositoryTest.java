@@ -1,15 +1,17 @@
 package es.uca.es;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 import es.uca.es.infraestructure.repositories.TaskRepositoryMemory;
 import es.uca.es.models.Task;
@@ -30,7 +32,7 @@ public class TaskRepositoryTest {
         taskRepository.addTask(task);
         taskRepository.saveChanges();
         Task retrievedTask = taskRepository.getTask("1");
-        
+
         assertNotNull(retrievedTask);
         assertEquals("1", retrievedTask.getId());
         assertEquals("New Task", retrievedTask.getName());
@@ -53,7 +55,6 @@ public class TaskRepositoryTest {
         assertNotNull(retrievedTask.getId());
         assertEquals("New Task", retrievedTask.getName());
     }
-
 
     @Test
     public void testGetTasks() {
@@ -85,8 +86,8 @@ public class TaskRepositoryTest {
         assertNull(retrievedTask);
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void removeTaskDoesntExist(){
+    @Test(expected = IllegalArgumentException.class)
+    public void removeTaskDoesntExist() {
         Task task = new Task("Task 1");
         taskRepository.addTask(task);
         taskRepository.removeTask(task);
@@ -108,13 +109,12 @@ public class TaskRepositoryTest {
         assertEquals("Updated Task 1", retrievedTask.getName());
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testUpdateTaskDoesNotExist(){
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpdateTaskDoesNotExist() {
         Task task = new Task("Task 1");
         taskRepository.addTask(task);
         taskRepository.updateTask(task);
     }
-
 
     @Test
     public void testSaveChanges() {
