@@ -7,10 +7,12 @@ import es.uca.es.contracts.Command;
 import es.uca.es.contracts.TaskRepository;
 import es.uca.es.enums.Priority;
 import es.uca.es.models.Task;
+import es.uca.es.models.validators.TaskValidator;
 
 public class AddTask implements Command {
     private TaskRepository taskRepository;
     private Scanner scanner = new Scanner(System.in);
+    private TaskValidator validator = new TaskValidator();
 
     public AddTask(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
@@ -22,21 +24,22 @@ public class AddTask implements Command {
         do {
             System.out.println("Introduce el nombre de la tarea: ");
             name = scanner.nextLine();
-            if (name.isEmpty())
-                System.out.println("El nombre no puede estar vacío");
-        } while (name.isEmpty());
+            if (validator.ValidateName(name))
+                System.out.println("El nombre no es válido");
+        } while (!validator.ValidateName(name));
+
         Task task = new Task(name);
 
         System.out.println("Introduce la descripción de la tarea: ");
         String description = scanner.nextLine();
         task.setDescription(description);
-        
+
         Priority priority = SelectPriority();
         task.setPriority(priority);
 
         LocalDate dueDate = SelectDueDate();
         task.setDueDate(dueDate);
-        
+
         taskRepository.addTask(task);
         taskRepository.saveChanges();
     }
@@ -47,12 +50,13 @@ public class AddTask implements Command {
     }
 
     private Priority SelectPriority() {
-        boolean prioritySelected = false;
+        boolean isPriorityValid = false;
         do {
             System.out.println("Introduce la prioridad de la tarea: ");
             try {
                 Integer priority = Integer.parseInt(scanner.nextLine());
-                if (priority >= 0 && priority <= 4)
+                isPriorityValid = validator.ValidatePriority(priority);
+                if (isPriorityValid)
                     return Priority.values()[priority];
 
                 throw new NumberFormatException();
@@ -61,7 +65,7 @@ public class AddTask implements Command {
                 System.out.println(
                         "La prioridad debe ser un número del 0 al 4\n0 = NOT_DEFINED, 1 = LOW, 2 = MEDIUM, 3 = HIGH, 4 = URGENT\n");
             }
-        } while (!prioritySelected);
+        } while (!isPriorityValid);
 
         return Priority.NOT_DEFINED;
     }

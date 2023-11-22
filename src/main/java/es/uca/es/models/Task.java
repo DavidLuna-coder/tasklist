@@ -75,4 +75,17 @@ public class Task {
     public void setPriority(Priority priority) {
         this.priority = priority;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(id)
+               .append(" | ")
+               .append(name)
+               .append(" | ")
+               .append(description)
+               .append(" | ")
+               .append(dueDate);
+        return builder.toString();
+    }
 }

@@ -29,6 +29,6 @@ public class Menu {
     }
 
     public void executeCommand(int index){
-        commands.get(index).execute();
+        commands.get(index - 1).execute();
     }
 }
