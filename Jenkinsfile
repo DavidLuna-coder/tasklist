@@ -1,24 +1,29 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.5-eclipse-temurin-17-alpine' 
-            args '-v /root/.m2:/root/.m2' 
-        }
-    }
+pipeline{
+    agent any
     stages {
-        stage('Build') { 
-            steps {
-                sh 'mvn -B -DskipTests clean package' 
+        stage('Build'){
+            steps{
+                sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Test') {
-            steps {
+        stage('Test'){
+            steps{
                 sh 'mvn test'
             }
-            post {
-                always {
+            post{
+                always{
                     junit 'target/surefire-reports/*.xml'
                 }
+            }
+        }
+        stage('Sonar Analysis'){
+            steps{
+                script{
+                    def scannerHome = tool 'SonarScanner 4.0';
+                    withSonarQubeEnv('SonarCloud') {
+                        sh "${scannerHome}/bin/sonar-scanner"
+                    }
+                }   
             }
         }
     }
